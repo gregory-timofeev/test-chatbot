@@ -339,6 +339,8 @@ function PureArtifact({
                     className="bg-background dark:bg-muted"
                     setMessages={setMessages}
                     selectedVisibilityType={selectedVisibilityType}
+                    roleContext={{ title: "", context: "" }}
+                    onRoleSelect={() => {}}
                   />
                 </form>
               </div>
