@@ -72,7 +72,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { id, message, selectedChatModel, selectedVisibilityType } =
+    const { id, message, selectedChatModel, selectedVisibilityType, roleContext } =
       requestBody;
 
     const session = await auth();
@@ -148,7 +148,7 @@ export async function POST(request: Request) {
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel, requestHints }),
+          system: systemPrompt({ selectedChatModel, requestHints, roleContext }),
           messages,
           maxSteps: 5,
           experimental_activeTools:

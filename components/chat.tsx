@@ -69,6 +69,7 @@ export function Chat({
       message: body.messages.at(-1),
       selectedChatModel: initialChatModel,
       selectedVisibilityType: visibilityType,
+      roleContext: roleContext?.context,
     }),
     onFinish: () => {
       mutate(unstable_serialize(getChatHistoryPaginationKey));
@@ -106,6 +107,7 @@ export function Chat({
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  const [roleContext, setRoleContext] = useState<{title: string, context: string} | null>(null);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   useAutoResume({
@@ -153,6 +155,10 @@ export function Chat({
               setMessages={setMessages}
               append={append}
               selectedVisibilityType={visibilityType}
+              roleContext={roleContext}
+              onRoleSelect={(title: string, context: string) => 
+                setRoleContext(title && context ? { title, context } : null)
+              }
             />
           )}
         </form>

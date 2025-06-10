@@ -42,6 +42,8 @@ function PureMultimodalInput({
   handleSubmit,
   className,
   selectedVisibilityType,
+  roleContext,
+  onRoleSelect,
 }: {
   chatId: string;
   input: UseChatHelpers['input'];
@@ -56,6 +58,8 @@ function PureMultimodalInput({
   handleSubmit: UseChatHelpers['handleSubmit'];
   className?: string;
   selectedVisibilityType: VisibilityType;
+  roleContext: {title: string, context: string} | null;
+  onRoleSelect: (title: string, context: string) => void;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -193,6 +197,10 @@ function PureMultimodalInput({
     }
   }, [status, scrollToBottom]);
 
+  const handleRoleSelect = (role: string, context: string) => {
+    onRoleSelect(role, context);
+  };
+
   return (
     <div className="relative w-full flex flex-col gap-4">
       <AnimatePresence>
@@ -227,8 +235,37 @@ function PureMultimodalInput({
             append={append}
             chatId={chatId}
             selectedVisibilityType={selectedVisibilityType}
+            onRoleSelect={handleRoleSelect}
           />
         )}
+
+      {roleContext && (
+        <div className="flex items-center justify-between p-3 bg-muted rounded-lg border mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Active Role:</span>
+            <span className="text-sm text-foreground font-semibold">
+              {roleContext.title}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <SuggestedActions
+              append={append}
+              chatId={chatId}
+              selectedVisibilityType={selectedVisibilityType}
+              onRoleSelect={handleRoleSelect}
+              isCompact={true}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onRoleSelect('', '')}
+              className="h-8 px-2 text-xs"
+            >
+              Clear
+            </Button>
+          </div>
+        </div>
+      )}
 
       <input
         type="file"
@@ -318,6 +355,7 @@ export const MultimodalInput = memo(
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
     if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
       return false;
+    if (!equal(prevProps.roleContext, nextProps.roleContext)) return false;
 
     return true;
   },
